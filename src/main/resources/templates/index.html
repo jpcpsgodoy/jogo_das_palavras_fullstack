@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Jogo das Palavras</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --primary-color: #009999;
+      --secondary-color: #007777;
+      --background-color: #f5f5f5;
+      --panel-bg: #ffffff;
+      --text-color: #333333;
+      --light-text: #ffffff;
+      --gradient-bg: linear-gradient(135deg, #00c4c4, #007777);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: var(--background-color); 
+      color: var(--text-color); 
+      min-height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      overflow-x: hidden;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .menu { 
+      display: flex; 
+      justify-content: flex-end; 
+      padding: 10px; 
+      background: var(--panel-bg); 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .menu button { 
+      background: none; 
+      border: none; 
+      color: var(--primary-color); 
+      cursor: pointer; 
+      margin-left: 15px; 
+      font-size: 14px; 
+      font-weight: 500; 
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    .menu button:hover { 
+      background-color: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0,153,153,0.3);
+    }
+    .menu button:active {
+      transform: translateY(0);
+    }
+    .game-container { 
+      flex: 1; 
+      display: flex; 
+      max-width: 1000px; 
+      margin: 20px auto; 
+      background: var(--panel-bg); 
+      border-radius: 10px; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+      overflow: hidden; 
+    }
+    .sidebar { 
+      background: var(--primary-color); 
+      color: var(--light-text); 
+      padding: 20px; 
+      width: 250px; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+    }
+    .game-title { 
+      font-size: 24px; 
+      font-weight: bold; 
+      margin-bottom: 20px; 
+      text-align: center; 
+    }
+    .game-icon { 
+      width: 100px; 
+      height: 100px; 
+      object-fit: contain; 
+      margin-bottom: 20px; 
+    }
+    .main-content { 
+      flex: 1; 
+      padding: 20px; 
+      display: flex; 
+      flex-direction: column; 
+    }
+    .panel { 
+      margin-bottom: 15px; 
+    }
+    .panel-title { 
+      font-size: 16px; 
+      font-weight: 600; 
+      margin-bottom: 8px; 
+      color: var(--primary-color); 
+    }
+    .panel-content { 
+      border: 2px solid var(--primary-color); 
+      border-radius: 8px; 
+      padding: 10px; 
+      background: var(--panel-bg); 
+      overflow-y: auto; 
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    #tokensPanel { 
+      height: 120px; 
+      font-family: 'Courier New', monospace; 
+      font-size: 16px; 
+    }
+    #tokensPanel span {
+      display: inline-block;
+      width: auto;
+      min-width: 60px;
+      text-align: center;
+      margin: 2px;
+    }
+    #cluesPanel { 
+      height: 200px; 
+      font-size: 14px; 
+    }
+    #guessedWordsPanel { 
+      height: 100px; 
+      font-size: 16px; 
+      font-weight: bold; 
+      color: var(--secondary-color); 
+    }
+    .input-area { 
+      display: flex; 
+      margin-top: auto; 
+      align-items: center; 
+    }
+    #guessInput { 
+      flex: 1; 
+      padding: 10px; 
+      font-size: 14px; 
+      border: 2px solid var(--primary-color); 
+      border-radius: 6px; 
+    }
+    #guessButton { 
+      padding: 10px 20px; 
+      margin-left: 10px; 
+      background: var(--primary-color); 
+      color: white; 
+      border: none; 
+      border-radius: 6px; 
+      font-weight: 600; 
+      cursor: pointer; 
+    }
+    #guessButton.correct { 
+      animation: bounce 0.6s; 
+      background-color: #4CAF50 !important; 
+    }
+    #guessButton.wrong { 
+      animation: shake 0.6s; 
+      background-color: #F44336 !important; 
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .attempts-counter { 
+      margin-top: 20px; 
+      font-size: 16px; 
+      font-weight: 600; 
+      text-align: center; 
+      background: rgba(255,255,255,0.2); 
+      padding: 6px 12px; 
+      border-radius: 20px; 
+    }
+    dialog#helpDialog { 
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      width: 90%;
+      background: linear-gradient(135deg, #f5f5f5, #e0f7f7);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease;
+    }
+    dialog#helpDialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+    dialog#helpDialog h3 {
+      font-size: 24px;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    dialog#helpDialog p {
+      font-size: 16px;
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+    dialog#helpDialog button#closeHelp {
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--primary-color);
+      color: var(--light-text);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    dialog#helpDialog button#closeHelp:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,153,153,0.3);
+    }
+    dialog#numberDialog { 
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      width: 90%;
+      background: linear-gradient(135deg, #f5f5f5, #e0f7f7);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease;
+    }
+    dialog#numberDialog::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+    dialog#numberDialog h3 {
+      font-size: 24px;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    dialog#numberDialog label {
+      font-size: 16px;
+      color: var(--text-color);
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    dialog#numberDialog input {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 2px solid var(--primary-color);
+      border-radius: 6px;
+      margin-bottom: 15px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    dialog#numberDialog input:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 8px rgba(0,153,153,0.3);
+    }
+    dialog#numberDialog menu {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    dialog#numberDialog button {
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    dialog#numberDialog #numberOk {
+      background: var(--primary-color);
+      color: var(--light-text);
+    }
+    dialog#numberDialog #numberOk:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,153,153,0.3);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-content {
+      background: var(--panel-bg);
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      position: relative;
+      background: linear-gradient(135deg, #f5f5f5, #e0f7f7);
+      animation: slideIn 0.3s ease;
+    }
+    .modal-content h2 {
+      font-size: 24px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .modal-content p {
+      font-size: 16px;
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .modal-buttons button {
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .modal-buttons .yes {
+      background: var(--primary-color);
+      color: var(--light-text);
+    }
+    .modal-buttons .yes:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,153,153,0.3);
+    }
+    .modal-buttons .no {
+      background: #e0e0e0;
+      color: var(--text-color);
+    }
+    .modal-buttons .no:hover {
+      background: #d0d0d0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .exit-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--gradient-bg);
+      animation: bgFadeIn 1s ease;
+    }
+    .exit-content {
+      background: var(--panel-bg);
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      animation: popIn 0.5s ease;
+    }
+    .exit-content h1 {
+      font-size: 32px;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      animation: textPulse 2s infinite;
+    }
+    .exit-content p {
+      font-size: 18px;
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+    .exit-content button {
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      background: var(--primary-color);
+      color: var(--light-text);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .exit-content button:hover {
+      background: var(--secondary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,153,153,0.4);
+    }
+    .exit-footer {
+      margin-top: 15px;
+      font-size: 12px;
+      color: var(--text-color);
+    }
+    .exit-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      margin: 0 8px;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+    .exit-footer a:hover {
+      color: var(--secondary-color);
+      transform: translateY(-2px);
+      text-shadow: 0 2px 5px rgba(0,153,153,0.3);
+    }
+    @keyframes bgFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes textPulse {
+      0% { text-shadow: 0 0 5px rgba(0,153,153,0.5); }
+      50% { text-shadow: 0 0 15px rgba(0,153,153,0.8); }
+      100% { text-shadow: 0 0 5px rgba(0,153,153,0.5); }
+    }
+    footer {
+      text-align: center;
+      padding: 8px 0;
+      background: var(--panel-bg);
+      color: var(--text-color);
+      font-size: 13px;
+      font-weight: 500;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 10px;
+      z-index: 1000;
+      opacity: 0.85;
+    }
+    footer span {
+      color: var(--primary-color);
+      position: relative;
+      cursor: pointer;
+    }
+    footer a.footer-link {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    footer a.footer-link:hover {
+      color: var(--secondary-color);
+      text-shadow: 0 2px 5px rgba(0,153,153,0.3);
+    }
+    .social-tooltip {
+      visibility: hidden;
+      background: var(--panel-bg);
+      border-radius: 8px;
+      padding: 10px;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .social-tooltip a {
+      color: var(--primary-color);
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .social-tooltip a:hover {
+      color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+    footer span:hover .social-tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    .notification {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      border: 2px solid var(--primary-color);
+      border-radius: 8px;
+      padding: 12px 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 10002;
+      text-align: center;
+      color: var(--text-color);
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .notification.show {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .game-container { 
+        flex-direction: column; 
+        margin: 0; 
+        width: 100%;
+        max-width: 100%;
+        min-height: calc(100vh - 60px);
+        border-radius: 0;
+      }
+      .sidebar { 
+        width: 100%; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 15px; 
+      }
+      .game-title { 
+        font-size: 20px; 
+        margin-bottom: 10px; 
+        order: 1;
+      }
+      .game-icon { 
+        width: 80px; 
+        height: 80px; 
+        margin: 10px 0; 
+        order: 2;
+      }
+      .attempts-counter { 
+        font-size: 14px; 
+        margin-top: 10px; 
+        padding: 5px 10px; 
+        order: 3;
+      }
+      .main-content { 
+        padding: 15px; 
+      }
+      .menu { 
+        justify-content: center; 
+        padding: 8px; 
+        width: 100%;
+        flex-wrap: wrap;
+      }
+      .menu button { 
+        margin: 5px; 
+        font-size: 12px; 
+        padding: 5px 10px; 
+      }
+      .panel { 
+        margin-bottom: 10px; 
+      }
+      .panel-title { 
+        font-size: 14px; 
+      }
+      .panel-content { 
+        padding: 8px; 
+      }
+      #tokensPanel { 
+        height: 100px; 
+        font-size: 14px; 
+      }
+      #cluesPanel { 
+        height: 150px; 
+        font-size: 12px; 
+      }
+      #guessedWordsPanel { 
+        height: 80px; 
+        font-size: 14px; 
+      }
+      .input-area { 
+        flex-direction: row; 
+        gap: 8px; 
+      }
+      #guessInput { 
+        padding: 8px; 
+        font-size: 12px; 
+      }
+      #guessButton { 
+        padding: 8px 15px; 
+        font-size: 12px; 
+      }
+      dialog#helpDialog,
+      dialog#numberDialog { 
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 10px;
+      }
+      dialog#helpDialog h3 { 
+        font-size: 20px; 
+      }
+      dialog#helpDialog p { 
+        font-size: 14px; 
+      }
+      dialog#helpDialog button#closeHelp { 
+        padding: 6px 15px; 
+        font-size: 12px; 
+      }
+      dialog#numberDialog h3 { 
+        font-size: 20px; 
+      }
+      dialog#numberDialog label { 
+        font-size: 14px; 
+      }
+      dialog#numberDialog input { 
+        padding: 8px; 
+        font-size: 12px; 
+      }
+      dialog#numberDialog button { 
+        padding: 6px 15px; 
+        font-size: 12px; 
+      }
+      .modal-content { 
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 10px;
+      }
+      .modal-content h2 { 
+        font-size: 20px; 
+      }
+      .modal-content p { 
+        font-size: 14px; 
+      }
+      .modal-buttons button { 
+        padding: 6px 15px; 
+        font-size: 12px; 
+      }
+      .exit-content { 
+        padding: 20px; 
+      }
+      .exit-content h1 { 
+        font-size: 24px; 
+      }
+      .exit-content p { 
+        font-size: 14px; 
+      }
+      .exit-content button { 
+        padding: 8px 20px; 
+        font-size: 14px; 
+      }
+      .exit-footer { 
+        font-size: 10px; 
+      }
+      .exit-footer a { 
+        font-size: 16px; 
+        margin: 0 6px; 
+      }
+      footer { 
+        font-size: 11px; 
+        padding: 6px 10px; 
+      }
+      .social-tooltip {
+        bottom: auto;
+        top: 100%;
+      }
+      .notification {
+        font-size: 14px;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    <button id="helpBtn">Ajuda</button>
+    <button id="restartBtn">Reiniciar</button>
+    <button id="exitBtn">Sair</button>
+  </div>
+
+  <dialog id="numberDialog">
+    <form method="dialog">
+      <h3>Configurar Jogo</h3>
+      <label for="numberInput">Número de palavras (1-100):</label>
+      <input type="number" id="numberInput" min="1" max="100" placeholder="Digite um número">
+      <menu style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
+        <button id="numberOk" type="submit">OK</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <div class="game-container">
+    <div class="sidebar">
+      <h1 class="game-title">Jogo da Adivinhação</h1>
+      <img src="https://cdn-icons-png.flaticon.com/512/6746/6746903.png" alt="Ícone" class="game-icon">
+      <div class="attempts-counter" id="attemptsCounter">Tentativas: 0</div>
+    </div>
+    <div class="main-content">
+      <div class="panel">
+        <div class="panel-title">Painel de tokens</div>
+        <div class="panel-content" id="tokensPanel"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Painel de dicas</div>
+        <div class="panel-content" id="cluesPanel"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Palavras adivinhadas</div>
+        <div class="panel-content" id="guessedWordsPanel"></div>
+      </div>
+      <div class="input-area">
+        <input type="text" id="guessInput" placeholder="Digite sua tentativa..." autocomplete="off">
+        <button id="guessButton">Adivinhar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © <span>João Pedro C. de Godoy
+      <div class="social-tooltip">
+        <a href="https://www.linkedin.com/in/joão-pedro-coelho-18b623338" target="_blank" title="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="mailto:jpcpsgodoy@gmail.com" title="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://github.com/jpcpsgodoy" target="_blank" title="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </span>, 2025 
+  </footer>
+
+  <div class="modal" id="customModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Confirmação</h2>
+      <p id="modalMessage">Deseja continuar?</p>
+      <div class="modal-buttons">
+        <button class="no" id="modalNo">Não</button>
+        <button class="yes" id="modalYes">Sim</button>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="helpDialog">
+    <h3>Como Jogar</h3>
+    <p>1. Leia as dicas com atenção<br>2. Observe os pedaços das palavras (tokens)<br>3. Digite a palavra completa e clique em Adivinhar</p>
+    <button id="closeHelp">OK</button>
+  </dialog>
+
+  <div class="notification" id="notification">Digite um número entre 1 e 100!</div>
+
+<script>
+  let wordDatabase = [];
+
+  //carrega as palavras do backend ao iniciar
+  async function carregarPalavrasDoBackend() {
+    try {
+      const resposta = await fetch("http://localhost:8080/palavras"); //faz requisição GET ao endpoint
+      const dados = await resposta.json(); //converte resposta em JSON
+      wordDatabase = dados.map(p => ({
+        word: p.palavra.toUpperCase(), //normaliza palavra para caixa alta
+        clue: p.dica //mantém a dica original
+      }));
+      askNumberOfWords(); //inicia o jogo após carregar os dados
+    } catch (erro) {
+      console.error("Erro ao carregar palavras:", erro); //exibe erro no console
+      alert("Não foi possível carregar palavras do servidor."); //mensagem amigável ao usuário
+    }
+  }
+
+  //executa ao carregar a página
+  window.onload = () => {
+    carregarPalavrasDoBackend(); //chama função de carregamento ao iniciar
+  };
+
+  //declara variáveis principais
+  let numberOfWords = 0, answerKey = [], guessedWords = [], currentWords = [], currentClues = [], numAttempts = 0;
+
+  //referência aos elementos do DOM
+  const tokensPanel = document.getElementById('tokensPanel'); //exibe pedaços das palavras
+  const cluesPanel = document.getElementById('cluesPanel'); //exibe dicas
+  const guessedWordsPanel = document.getElementById('guessedWordsPanel'); //exibe palavras acertadas
+  const guessInput = document.getElementById('guessInput'); //campo de entrada do usuário
+  const guessButton = document.getElementById('guessButton'); //botão de adivinhar
+  const attemptsCounter = document.getElementById('attemptsCounter'); //contador de tentativas
+  const helpDialog = document.getElementById('helpDialog'); //modal de ajuda
+  const closeHelp = document.getElementById('closeHelp'); //botão de fechar ajuda
+  const notification = document.getElementById('notification'); //mensagem de erro no input
+
+  //define botões de ação
+  document.getElementById('helpBtn').onclick = () => helpDialog.showModal(); //abre ajuda
+  closeHelp.onclick = () => helpDialog.close(); //fecha ajuda
+  document.getElementById('restartBtn').onclick = restartGame; //reinicia o jogo
+  document.getElementById('exitBtn').onclick = async () => {
+    if (await showModal('Sair do Jogo', 'Tem certeza que deseja sair do jogo?')) exitGame(); //confirma saída
+  };
+  document.getElementById('numberOk').onclick = event => event.preventDefault(); //impede envio automático
+
+  //exibe notificação temporária de erro
+  function showNotification() {
+    notification.classList.add('show'); //exibe alerta
+    setTimeout(() => {
+      notification.classList.remove('show'); //oculta depois de 2s
+    }, 2000);
+  }
+
+  //abre o modal de escolha do número de palavras
+  function askNumberOfWords() {
+    const dlg = document.getElementById('numberDialog');
+    const input = document.getElementById('numberInput');
+    input.value = ''; //limpa campo anterior
+    dlg.showModal(); //abre o diálogo
+    const okButton = document.getElementById('numberOk');
+    
+    okButton.onclick = e => {
+      e.preventDefault(); //impede fechamento automático
+      const val = parseInt(input.value);
+      if (isNaN(val) || val < 1 || val > 100) {
+        showNotification(); //validação de entrada
+        input.value = '';
+        return;
+      }
+      numberOfWords = val;
+      dlg.close(); //fecha modal
+      setupGame(); //prepara jogo
+    };
+  }
+
+  //prepara o jogo embaralhando palavras e resetando tentativas
+  function setupGame() {
+    const shuffled = [...wordDatabase].sort(() => 0.5 - Math.random()); //embaralha palavras
+    currentWords = shuffled.slice(0, numberOfWords).map(w => w.word); //seleciona palavras
+    currentClues = shuffled.slice(0, numberOfWords).map(w => w.clue); //seleciona dicas
+    answerKey = [...currentWords]; //respostas a serem adivinhadas
+    guessedWords = []; //reinicia lista de acertos
+    numAttempts = 0; //reinicia tentativas
+    updateGameDisplay(); //atualiza UI
+  }
+
+  //atualiza os elementos visuais com as dicas, tokens e palavras acertadas
+  function updateGameDisplay() {
+    const remainingTokens = answerKey.flatMap(tokenizeWord).sort(() => 0.5 - Math.random()); //gera e embaralha tokens
+    tokensPanel.innerHTML = remainingTokens.map(t => `<span>${t}</span>`).join(''); //mostra tokens
+    cluesPanel.innerHTML = currentClues.map((clue,i) => !guessedWords.includes(currentWords[i]) ? `${i+1}. ${clue}<br>` : '').join(''); //mostra dicas restantes
+    guessedWordsPanel.innerHTML = guessedWords.join('<br>') || 'Nenhuma ainda'; //mostra palavras acertadas
+    attemptsCounter.textContent = `Tentativas: ${numAttempts}`; //atualiza contador
+  }
+
+  //divide palavras em blocos de 3 letras
+  function tokenizeWord(w) { 
+    const tokens=[]; 
+    for(let i=0;i<w.length;i+=3) tokens.push(w.substring(i,i+3)); //gera tokens com até 3 letras
+    return tokens; 
+  }
+
+  //verifica a tentativa do usuário
+  async function handleGuess() {
+    const guess = guessInput.value.trim().toUpperCase(); 
+    if(!guess) return;
+    numAttempts++;
+    const idx = answerKey.indexOf(guess);
+    if(idx!==-1) {
+      answerKey.splice(idx,1); 
+      guessedWords.push(guess);
+      guessButton.textContent='Acertou!'; 
+      guessButton.classList.add('correct');
+      if(answerKey.length===0) setTimeout(async ()=>{
+        if(await showModal('Parabéns!', `Você venceu com ${numAttempts} tentativa${numAttempts>1?'s':''}! Deseja jogar novamente?`)) askNumberOfWords(); 
+        else exitGame(); //fim do jogo
+      },600);
+    } else { 
+      guessButton.textContent='Errou!'; 
+      guessButton.classList.add('wrong'); 
+    }
+    setTimeout(()=>{ 
+      guessButton.textContent='Adivinhar'; 
+      guessButton.classList.remove('correct','wrong'); 
+    },1000);
+    guessInput.value=''; 
+    updateGameDisplay();
+  }
+
+  //reinicia o jogo com ou sem nova seleção de palavras
+  function restartGame() {
+    showModal('Reiniciar Jogo', 'Deseja escolher um novo número de palavras?').then(ok => ok ? askNumberOfWords() : setupGame());
+  }
+
+  //encerra o jogo e mostra mensagem final
+  function exitGame() {
+    document.body.innerHTML = `
+      <div class="exit-screen">
+        <div class="exit-content">
+          <h1>Obrigado por Jogar!</h1>
+          <p>Esperamos que tenha se divertido! Volte quando quiser para mais desafios.</p>
+          <button onclick="location.reload()">Jogar Novamente</button>
+          <div class="exit-footer">
+            Desenvolvido por João Pedro C. de Godoy, 2025<br>
+            <a href="https://www.linkedin.com/in/joão-pedro-coelho-18b623338" target="_blank" title="LinkedIn">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="mailto:jpcpsgodoy@gmail.com" title="Email">
+              <i class="fas fa-envelope"></i>
+            </a>
+            <a href="https://github.com/jpcpsgodoy" target="_blank" title="GitHub">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  //exibe modal de confirmação com promessa
+  function showModal(title, msg) {
+    return new Promise(res => {
+      const m = document.getElementById('customModal');
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = msg;
+      m.style.display = 'flex';
+      document.getElementById('modalYes').onclick = () => { m.style.display = 'none'; res(true); };
+      document.getElementById('modalNo').onclick = () => { m.style.display = 'none'; res(false); };
+    });
+  }
+
+  //define botões de adivinhação
+  guessButton.onclick = handleGuess;
+  guessInput.onkeypress = e => { if (e.key === 'Enter') handleGuess(); };
+
+</script>
+
