@@ -29,6 +29,7 @@ O banco atual contém **mais 100 palavras** com suas respectivas dicas, cuidados
 Antes de rodar o backend, edite o arquivo src/main/resources/application.properties e substitua os dados de acesso ao PostgreSQL:
 
 spring.datasource.username=seu-user
+
 spring.datasource.password=sua-senha
 
 Certifique-se de que o banco esteja rodando e o nome do banco de dados corresponda ao usado no seu projeto.
