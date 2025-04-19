@@ -39,24 +39,30 @@ Certifique-se de que o banco esteja rodando e o nome do banco de dados correspon
 ### Tentando carregar as palavras sem rodar a API:
 
 **Rodando o server**
+
 ![Rodando o server](/imagens/servidor_rodando.png)
 
 **Erro de Carregamento**
+
 ![Erro de carregamento](/imagens/erro_carregamento.png)
 
 ### Rodando a API:
 **Comando para rodar a API**
+
 ![Comando para rodar a API](/imagens/comando_API.png)
 
 **API rodando**
+
 ![API rodando](imagens/API_rodando.png)
 
 ### Tentando novamente carregar as palavras (agora funcionando!):
 **Palavras carregadas**
+
 ![Palavras carregadas](
 imagens/palavras_carregadas.png)
 
 **Jogo pronto**
+
 ![Jogo pronto](imagens/jogo_pronto.png)
 
 
