@@ -22,7 +22,7 @@ Este projeto é uma simples aplicação web interativa baseada no jogo de adivin
 
 ## 📦 Quantidade de Palavras
 
-O banco atual contém **mais 100 palavras** com suas respectivas dicas, cuidadosamente selecionadas para tornar a experiência divertida e educativa.
+O banco atual contém **100 palavras** com suas respectivas dicas, cuidadosamente selecionadas para tornar a experiência divertida e educativa.
 
 ## 🛠️ Configuração do Banco
 
