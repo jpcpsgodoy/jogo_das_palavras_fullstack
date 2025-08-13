@@ -1,9 +1,9 @@
-# 🧩 Jogo das Palavras – Projeto Full Stack Java
+#  Jogo das Palavras – Projeto Full Stack Java
 
 Este projeto é uma simples aplicação web interativa baseada no jogo de adivinhação com dicas e tokens de palavras embaralhadas.
 
 
-## 🔧 Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 - **Backend:** Spring Boot (Java)
 - **Banco de dados:** PostgreSQL
@@ -11,20 +11,20 @@ Este projeto é uma simples aplicação web interativa baseada no jogo de adivin
 - **Servidor local de testes:** Python HTTP Server
 
 
-## 🔁 Lógica da Aplicação
+##  Lógica da Aplicação
 
 - O backend expõe um endpoint `/palavras` com uma lista de palavras e suas respectivas dicas.
 - O frontend consome essa API usando `fetch()` e exibe os dados para o jogador.
 - O jogador escolhe quantas palavras quer adivinhar (de 1 a 100).
 - O jogo embaralha os tokens das palavras, mostra dicas e aceita tentativas.
-- A cada acerto ou erro, há um feedback visual, e ao final da rodada, o sistema exibe uma tela de comemoração. 🎉
+- A cada acerto ou erro, há um feedback visual, e ao final da rodada, o sistema exibe uma tela de comemoração. 
 
 
-## 📦 Quantidade de Palavras
+##  Quantidade de Palavras
 
 O banco atual contém **100 palavras** com suas respectivas dicas, cuidadosamente selecionadas para tornar a experiência divertida e educativa.
 
-## 🛠️ Configuração do Banco
+## 🛠 Configuração do Banco
 
 Antes de rodar o backend, edite o arquivo src/main/resources/application.properties e substitua os dados de acesso ao PostgreSQL:
 
@@ -35,7 +35,7 @@ spring.datasource.password=sua-senha
 Certifique-se de que o banco esteja rodando e o nome do banco de dados corresponda ao usado no seu projeto.
 
 
-## 🧪 Imagens do Processo
+##  Imagens do Processo
 
 ### Tentando carregar as palavras sem rodar a API:
 
@@ -67,7 +67,7 @@ imagens/palavras_carregadas.png)
 ![Jogo pronto](imagens/jogo_pronto.png)
 
 
-## 🎮 Funcionalidades do Frontend
+##  Funcionalidades do Frontend
 
 O frontend foi desenvolvido com foco na experiência do usuário e inclui diversas interações que tornam o jogo mais envolvente:
 
@@ -94,14 +94,14 @@ O frontend foi desenvolvido com foco na experiência do usuário e inclui divers
         O layout foi ajustado para funcionar bem em dispositivos móveis, tablets e desktops.
 
 
-## 🔗 Teste Agora!
+##  Teste Agora!
 
 A versão apenas frontend (com as palavras embutidas no código) já está publicada para acesso livre! Basta clicar no link abaixo para jogar diretamente do seu navegador:
 
 https://projeto-jogo-das-palavras.vercel.app/
 
 
-## 🚀 Execução Local
+##  Execução Local
 
 1. Clone o repositório
 2. Configure o banco de dados PostgreSQL e rode o script com as palavras
@@ -109,7 +109,7 @@ https://projeto-jogo-das-palavras.vercel.app/
 4. Suba o frontend com `python3 -m http.server`
 
 
-## 👨‍💻 Autor
+##  Autor
 
 João Pedro C. de Godoy - Estudante de Ciência da Computação – Unicamp  
 [LinkedIn](https://www.linkedin.com/in/joão-pedro-coelho-18b623338) 
