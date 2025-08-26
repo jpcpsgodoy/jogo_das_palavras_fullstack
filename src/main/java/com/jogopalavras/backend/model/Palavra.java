@@ -3,7 +3,7 @@ package com.jogopalavras.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "palavras") // 👈 Aqui está a mágica
+@Table(name = "palavras") 
 public class Palavra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
