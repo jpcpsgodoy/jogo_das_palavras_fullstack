@@ -1,0 +1,35 @@
+# Diretório de builds do Maven
+/target/
+
+# Arquivos de log
+*.log
+
+# Arquivos de compilação Java
+*.class
+
+# Configurações do macOS
+.DS_Store
+
+# Configurações de IDEs
+.idea/
+.vscode/
+*.iml
+
+# Arquivos compactados e backups
+*.zip
+*.rar
+*.tar.gz
+*.bak
+
+# Sistema operacional
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Ambiente virtual (caso use Python localmente)
+venv/
+__pycache__/
+
+# Evita que arquivos de teste locais sejam versionados
+/test-output/
+
