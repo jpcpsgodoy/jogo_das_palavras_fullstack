@@ -722,8 +722,9 @@
   <dialog id="numberDialog">
     <form method="dialog">
       <h3>Configurar Jogo</h3>
-      <label for="numberInput">Número de palavras (1-100):</label>
-      <input type="number" id="numberInput" min="1" max="100" placeholder="Digite um número">
+      <label for="numberInput">Número de palavras (1-50):</label>
+      <input type="number" id="numberInput" min="1" max="50" placeholder="Digite um número">
+      <div class="notification" id="notification" style="position: relative; top: auto; left: auto; transform: none; background: transparent; border: none; box-shadow: none; color: #ff3333; margin-top: 5px; padding: 0; font-size: 13px; text-align: center; font-weight: bold;">Digite um número entre 1 e 50!</div>
       <menu style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
         <button id="numberOk" type="submit">OK</button>
       </menu>
@@ -789,7 +790,7 @@
     <button id="closeHelp">OK</button>
   </dialog>
 
-  <div class="notification" id="notification">Digite um número entre 1 e 100!</div>
+
 
 <script>
   let wordDatabase = [];
@@ -858,7 +859,7 @@
     okButton.onclick = e => {
       e.preventDefault(); //impede fechamento automático
       const val = parseInt(input.value);
-      if (isNaN(val) || val < 1 || val > 100) {
+      if (isNaN(val) || val < 1 || val > 50) {
         showNotification(); //validação de entrada
         input.value = '';
         return;
